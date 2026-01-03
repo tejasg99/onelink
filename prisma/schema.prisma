@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==================== AUTH MODELS ====================
+// Required by NextAuth Prisma Adapter and overlapping app models
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  username      String?   @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  onelinks OneLink[]
+
+  @@map("users")
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ==================== APP MODELS ====================
+
+enum OneLinkType {
+  TEXT
+  CODE
+  FILE
+  LINKS
+}
+
+enum Visibility {
+  PUBLIC
+  UNLISTED
+}
+
+model OneLink {
+  id         String      @id @default(cuid())
+  slug       String      @unique
+  title      String?
+  type       OneLinkType
+  visibility Visibility  @default(UNLISTED)
+  expiresAt  DateTime?
+  viewCount  Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  // Relations
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Content relations (one-to-one based on type)
+  textContent TextContent?
+  codeContent CodeContent?
+  fileContent FileContent?
+  bioLinks    BioLink[]
+
+  @@index([slug])
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("onelinks")
+}
+
+model TextContent {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  onelinkId String  @unique
+  onelink   OneLink @relation(fields: [onelinkId], references: [id], onDelete: Cascade)
+
+  @@map("text_contents")
+}
+
+model CodeContent {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  language  String   @default("plaintext")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  onelinkId String  @unique
+  onelink   OneLink @relation(fields: [onelinkId], references: [id], onDelete: Cascade)
+
+  @@map("code_contents")
+}
+
+model FileContent {
+  id         String   @id @default(cuid())
+  fileName   String
+  fileSize   Int // in bytes
+  mimeType   String
+  storageKey String // Supabase storage path
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  onelinkId String  @unique
+  onelink   OneLink @relation(fields: [onelinkId], references: [id], onDelete: Cascade)
+
+  @@map("file_contents")
+}
+
+model BioLink {
+  id        String   @id @default(cuid())
+  title     String
+  url       String
+  icon      String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  onelinkId String
+  onelink   OneLink @relation(fields: [onelinkId], references: [id], onDelete: Cascade)
+
+  @@index([onelinkId])
+  @@map("bio_links")
+}
