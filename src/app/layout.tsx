@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "sonner";
 import { Header } from "@/components/header";
 import "./globals.css";
 
@@ -24,6 +25,16 @@ export default function RootLayout({
             <Header />
             <main>{children}</main>
           </div>
+          <Toaster 
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: "hsl(var(--background))",
+                border: "1px solid hsl(var(--border))",
+                color: "hsl(var(--foreground))",
+              },
+            }}
+          />
         </SessionProvider>
       </body>
     </html>
