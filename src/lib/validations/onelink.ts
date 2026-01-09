@@ -3,8 +3,8 @@ import { z } from "zod";
 // Base schemas for common fields
 const baseSchema  = z.object({
     title: z.string().max(100, "Title must be less than 100 characters").optional(),
-    visibility: z.enum(["PUBLIC", "UNLISTED"]).default("UNLISTED"),
-    expiresIn: z.enum(["never", "1h", "24h", "7d"]).default("never"),
+    visibility: z.enum(["PUBLIC", "UNLISTED"]), // Removed .default() as RHF does not support it
+    expiresIn: z.enum(["never", "1h", "24h", "7d"]),
 })
 
 // Text content schema
@@ -23,7 +23,7 @@ export const codeSchema = baseSchema.extend({
     .string()
     .min(1, "Code is required")
     .max(50000, "Code snippet must be less than 50000 characters"),
-    language: z.string().default("plaintext"),
+    language: z.string(),
 })
 
 // File content schema 
