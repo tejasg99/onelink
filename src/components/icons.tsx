@@ -22,6 +22,7 @@ import {
   X,
   Sun,
   Moon,
+  Download
 } from "lucide-react"
 
 export const Icons = {
@@ -48,4 +49,5 @@ export const Icons = {
   close: X,
   sun: Sun,
   moon: Moon,
+  download: Download,
 } as const

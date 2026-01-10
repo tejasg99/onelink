@@ -11,14 +11,14 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 bg-zinc-300 dark:bg-black/90">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-900 dark:bg-white">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-900 dark:bg-neutral-100 border-2">
             <Icons.link className="h-6 w-6 text-white dark:text-neutral-900" />
           </div>
-          <h1 className="text-2xl font-bold">Welcome to OneLink</h1>
-          <p className="mt-2 text-neutral-600 dark:text-neutral-400">
+          <h1 className="text-2xl font-bold text-black dark:text-white">Welcome to OneLink</h1>
+          <p className="mt-2 text-neutral-600 dark:text-neutral-300">
             Sign in to create and manage your links
           </p>
         </div>
@@ -33,7 +33,7 @@ export default async function LoginPage() {
             <Button
               type="submit"
               variant="outline"
-              className="w-full h-11"
+              className="w-full h-11 cursor-pointer dark:bg-neutral-800 dark:text-neutral-400"
             >
               <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
                 <path
