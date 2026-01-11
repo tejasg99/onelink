@@ -5,6 +5,7 @@ import { db } from "@/lib/db"
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 import { formatRelativeTime } from "@/lib/utils"
+import { DeleteLinkButton } from "@/components/delete-link-button"
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -61,48 +62,68 @@ export default async function DashboardPage() {
         </div>
       ) : (
         <div className="grid gap-4">
-          {onelinks.map((link) => (
-            <Link
-              key={link.id}
-              href={`/link/${link.slug}`}
-              className="group flex items-center justify-between rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:border-neutral-300 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700"
-            >
-              <div className="flex items-center gap-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800">
-                  {link.type === "TEXT" && <Icons.text className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />}
-                  {link.type === "CODE" && <Icons.code className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />}
-                  {link.type === "FILE" && <Icons.file className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />}
-                  {link.type === "LINKS" && <Icons.links className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />}
-                </div>
-                <div>
-                  <h3 className="font-medium">
-                    {link.title || `Untitled ${link.type.toLowerCase()}`}
-                  </h3>
-                  <div className="flex items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
-                    <span className="flex items-center gap-1">
-                      <Icons.eye className="h-3.5 w-3.5" />
-                      {link.viewCount}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Icons.clock className="h-3.5 w-3.5" />
-                      {formatRelativeTime(link.createdAt)}
-                    </span>
-                    {link.expiresAt && (
-                      <span className="text-amber-600 dark:text-amber-400">
-                        Expires {formatRelativeTime(link.expiresAt)}
-                      </span>
+          {onelinks.map((link) => {
+            const isExpired = link.expiresAt && new Date(link.expiresAt) < new Date()
+
+            return (
+              <div
+                key={link.id}
+                className={`group flex items-center justify-between rounded-xl border border-neutral-200 bg-white p-4 transition-all hover:border-neutral-300 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700 ${
+                  isExpired ? "opacity-60" : ""
+                }`}
+              >
+                <Link
+                  href={`/s/${link.slug}`}
+                  className="flex flex-1 items-center gap-4"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800">
+                    {link.type === "TEXT" && (
+                      <Icons.text className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+                    )}
+                    {link.type === "CODE" && (
+                      <Icons.code className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+                    )}
+                    {link.type === "FILE" && (
+                      <Icons.file className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+                    )}
+                    {link.type === "LINKS" && (
+                      <Icons.links className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
                     )}
                   </div>
+                  <div>
+                    <h3 className="font-medium">
+                      {link.title || `Untitled ${link.type.toLowerCase()}`}
+                    </h3>
+                    <div className="flex items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
+                      <span className="flex items-center gap-1">
+                        <Icons.eye className="h-3.5 w-3.5" />
+                        {link.viewCount}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Icons.clock className="h-3.5 w-3.5" />
+                        {formatRelativeTime(link.createdAt)}
+                      </span>
+                      {isExpired && (
+                        <span className="text-red-500">Expired</span>
+                      )}
+                      {link.expiresAt && !isExpired && (
+                        <span className="text-amber-600 dark:text-amber-400">
+                          Expires {formatRelativeTime(link.expiresAt)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-neutral-100 px-2.5 py-0.5 text-xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
+                    {link.visibility.toLowerCase()}
+                  </span>
+                  <DeleteLinkButton id={link.id} title={link.title} />
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-neutral-100 px-2.5 py-0.5 text-xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
-                  {link.visibility.toLowerCase()}
-                </span>
-                <Icons.chevronDown className="h-4 w-4 -rotate-90 text-neutral-400 transition-transform group-hover:translate-x-1" />
-              </div>
-            </Link>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
