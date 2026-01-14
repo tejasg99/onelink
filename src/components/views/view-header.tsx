@@ -15,7 +15,7 @@ interface ViewHeaderProps {
 export function ViewHeader({ onelink }: ViewHeaderProps) {
     const [copied, setCopied ] = useState(false)
 
-    const handleCopyLink = async () => {
+    const handleCopyLink = async() => {
         const url = `${getBaseUrl()}/s/${onelink.slug}`
         await copyToClipboard(url)
         setCopied(true)
@@ -41,6 +41,14 @@ export function ViewHeader({ onelink }: ViewHeaderProps) {
                             <Icons.clock className="h-3.5 w-3.5" />
                             {formatRelativeTime(onelink.createdAt)}
                         </span>
+                        <span className="flex items-center gap-1">
+                            <Icons.eye className="h-3.5 w-3.5" />
+                            {onelink.viewCount}
+                        </span>
+                        <span className="flex items-center gap-1">
+                            <Icons.lock className="h-3.5 w-3.5" />
+                            {onelink.visibility.toLowerCase()}
+                        </span>
                         {onelink.expiresAt && (
                             <Badge variant="secondary" className="text-amber-600 dark:text-amber-400">
                                 <Icons.clock className="mr-1 h-3 w-3" />
@@ -55,7 +63,7 @@ export function ViewHeader({ onelink }: ViewHeaderProps) {
                     ): (
                         <Icons.copy className="mr-2 h-4 w-4" />
                     )}
-                    { copied ? "Copied": "Copy"}
+                    { copied ? "Copied": "Copy Link"}
                 </Button>
             </div>
         </div>

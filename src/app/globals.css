@@ -72,6 +72,23 @@
   }
 }
 
+/* DropdownMenu, Popover, ContextMenu */
+[data-radix-popper-content-wrapper] {
+  background-color: hsl(var(--popover)) !important;
+}
+
+/* Select content (Radix Select) */
+[data-radix-select-content] {
+  background-color: hsl(var(--popover)) !important;
+  color: hsl(var(--popover-foreground));
+  border: 1px solid hsl(var(--border));
+}
+
+/* Ensure the inner viewport is also solid */
+[data-radix-select-viewport] {
+  background-color: hsl(var(--popover)) !important;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -109,6 +126,7 @@
   --tw-prose-quotes: hsl(var(--foreground));
   --tw-prose-quote-borders: hsl(var(--border));
   --tw-prose-hr: hsl(var(--border));
+  color: hsl(var(--foreground));
 }
 
 .prose pre {
@@ -171,6 +189,7 @@
 /* Code block line numbers */
 .shiki {
   counter-reset: line;
+  background: hsl(var(--muted))
 }
 
 .shiki .line::before {

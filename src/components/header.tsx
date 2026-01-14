@@ -26,12 +26,13 @@ export async function Header() {
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
               <Button 
-                asChild 
+                asChild
+                variant="outline"
                 size="sm" 
                 className="bg-foreground text-background hover:bg-foreground/90"
               >
                 <Link href="/new">
-                  <Icons.plus className="mr-2 h-4 w-4" />
+                  <Icons.plus className="mr-1 h-4 w-4" />
                   Create
                 </Link>
               </Button>
@@ -39,15 +40,13 @@ export async function Header() {
             </>
           ) : (
             <>
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/login">Sign in</Link>
-              </Button>
               <Button 
                 asChild 
-                size="sm" 
-                className="bg-foreground text-background hover:bg-foreground/90"
+                variant="outline" 
+                size="sm"
+                className="hover:bg-neutral-700 hover:text-neutral-100"
               >
-                <Link href="/login">Get Started</Link>
+                <Link href="/login">Sign in</Link>
               </Button>
             </>
           )}

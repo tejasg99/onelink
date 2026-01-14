@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 import { copyToClipboard } from "@/lib/utils"
+import { toast } from "sonner"
 
 interface CopyButtonProps {
   text: string
@@ -23,6 +24,7 @@ export function CopyButton({
   const handleCopy = async () => {
     await copyToClipboard(text)
     setCopied(true)
+    toast.success("Content copied to clipboard!")
     setTimeout(() => setCopied(false), 2000)
   }
 

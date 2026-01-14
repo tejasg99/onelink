@@ -23,7 +23,7 @@ export default async function NewPage() {
         </p>
       </div>
 
-      <div className="rounded-xl border border-border bg-card p-6">
+      <div className="rounded-xl border bg-card p-6">
         <Tabs defaultValue="text" className="w-full">
           <TabsList className="mb-6 grid w-full grid-cols-4">
             <TabsTrigger value="text" className="flex items-center gap-2">

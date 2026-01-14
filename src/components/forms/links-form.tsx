@@ -90,7 +90,7 @@ export function LinksForm() {
           {fields.map((field, index) => (
             <div
               key={field.id}
-              className="flex gap-3 rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900"
+              className="flex gap-3 rounded-lg border p-2 shadow-2xs"
             >
               <div className="flex-1 space-y-3">
                 <Input
