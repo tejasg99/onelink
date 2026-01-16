@@ -2,6 +2,7 @@
 
 import { Session } from "next-auth"
 import { signOut } from "next-auth/react"
+import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -44,21 +45,21 @@ export function UserButton({ session }: UserButtonProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <a href="/dashboard" className="cursor-pointer">
+          <Link href="/dashboard" className="cursor-pointer">
             <Icons.link className="mr-2 h-4 w-4" />
             My Links
-          </a>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href="/settings" className="cursor-pointer">
+          <Link href="/settings" className="cursor-pointer">
             <Icons.settings className="mr-2 h-4 w-4" />
             Settings
-          </a>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer text-red-600 focus:text-red-600"
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={() => signOut({ redirectTo: "/" })}
         >
           <Icons.logout className="mr-2 h-4 w-4" />
           Log out

@@ -54,6 +54,19 @@ export const createOneLinkSchema = z.discriminatedUnion("type", [
     linksSchema,
 ])
 
+// Username validation 
+export const usernameSchema = z.object({
+    username: z
+    .string()
+    .min(3, "Username must be atleast 3 characters")
+    .max(30, "Username must be less than 30 characters")
+    .regex(
+        /^[a-zA-Z0-9_-]+$/,
+        "Username can only contain letters, numbers, underscores and hyphens"
+    )
+    .toLowerCase(),
+})
+
 // Types
 export type TextFormData = z.infer<typeof textSchema>
 export type CodeFormData = z.infer<typeof codeSchema>
@@ -61,3 +74,4 @@ export type FileFormData = z.infer<typeof fileSchema>
 export type LinksFormData = z.infer<typeof linksSchema>
 export type CreateOneLinkData = z.infer<typeof createOneLinkSchema>
 export type BiolinkItem = z.infer<typeof bioLinkItemSchema>
+export type UsernameFormData = z.infer<typeof usernameSchema>
