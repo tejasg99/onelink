@@ -89,6 +89,19 @@
   background-color: hsl(var(--popover)) !important;
 }
 
+/* AlertDialog overlay (backdrop) */
+[data-radix-alert-dialog-overlay] {
+  background-color: hsl(var(--background) / 0.8);
+}
+
+/* AlertDialog content (modal panel) */
+[data-radix-alert-dialog-content] {
+  background-color: hsl(var(--card)) !important;
+  color: hsl(var(--foreground));
+  border: 1px solid hsl(var(--border));
+}
+
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
