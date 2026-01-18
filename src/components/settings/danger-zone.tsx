@@ -58,7 +58,7 @@ export function DangerZone({ linkCount }: DangerZoneProps) {
                 <AlertDialogTrigger asChild>
                     <Button 
                         variant="destructive"
-                        className="cursor-pointer"
+                        className="cursor-pointer text-foreground border"
                     >
                         <Icons.trash className="mr-2 h-4 w-4" />
                         Delete Account
@@ -88,13 +88,13 @@ export function DangerZone({ linkCount }: DangerZoneProps) {
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel onClick={() => setConfirmText("")}>
+                        <AlertDialogCancel onClick={() => setConfirmText("")} className="cursor-pointer">
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleDelete}
                             disabled={confirmText !== "delete my account" || isLoading}
-                            className="bg-destructive hover:bg-destructive/90"
+                            className="bg-destructive hover:bg-destructive/90 cursor-pointer"
                         >
                             {isLoading && (
                                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

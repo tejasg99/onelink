@@ -11,6 +11,7 @@ interface CopyButtonProps {
   className?: string
   variant?: "default" | "ghost" | "outline"
   size?: "default" | "sm" | "lg" | "icon"
+  label?: string
 }
 
 export function CopyButton({
@@ -18,6 +19,7 @@ export function CopyButton({
   className,
   variant = "ghost",
   size = "icon",
+  label,
 }: CopyButtonProps) {
   const [copied, setCopied] = useState(false)
 
@@ -40,6 +42,7 @@ export function CopyButton({
       ) : (
         <Icons.copy className="h-4 w-4" />
       )}
+      {label && <span className="ml-2">{label}</span>}
     </Button>
   )
 }

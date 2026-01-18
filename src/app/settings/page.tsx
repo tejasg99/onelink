@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { Separator } from "@/components/ui/separator"
 import { UsernameForm } from "@/components/settings/username-form"
 import { AccountInfo } from "@/components/settings/account-info"
 import { DangerZone } from "@/components/settings/danger-zone"
+import { getBaseUrl } from "@/lib/utils"
 
 export default async function SettingsPage() {
     const session = await auth()
@@ -54,14 +54,9 @@ export default async function SettingsPage() {
                     <p className="mb-4 text-sm text-muted-foreground">
                         Set a custom username for your public profile page. Your link-in-bio
                         pages will be accessible at{" "}
-                        <code className="rounded bg-muted px-1.5 py-0.5 text-xs">
-                        onelink.app/{user.username || "username"}
-                        </code>
                     </p>
                     <UsernameForm currentUsername={user.username} />
                 </section>
-
-                <Separator />
 
                 {/* Danger Zone */}
                 <section className="rounded-xl border border-destructive/50 bg-card p-6">

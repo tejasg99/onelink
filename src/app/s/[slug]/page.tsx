@@ -27,6 +27,7 @@ export default async function ViewPage({ params }: ViewPageProps) {
                 select: {
                     name: true,
                     image: true,
+                    username: true,
                 },
             },
         },

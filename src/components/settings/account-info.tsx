@@ -16,7 +16,7 @@ interface AccountInfoProps {
 export function AccountInfo({ user }: AccountInfoProps) {
     return (
         <div className="flex items-start gap-4">
-            <Avatar className="h-16 w-16">
+            <Avatar className="h-16 w-16 border">
                 <AvatarImage src={user.image ?? undefined} alt={user.name ?? ""} />
                 <AvatarFallback className="text-xl">
                     {user.name?.charAt(0).toUpperCase() ?? "U"}

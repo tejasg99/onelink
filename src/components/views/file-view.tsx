@@ -41,6 +41,8 @@ export function FileView({ onelink, content }: FileViewProps) {
                     {isImage && (
                         <Image
                         src={`/api/file/${onelink.slug}`}
+                        width={200}
+                        height={200}
                         alt={content.fileName}
                         className="max-h-125 max-w-full rounded-lg object-contain"
                         />

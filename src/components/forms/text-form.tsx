@@ -153,7 +153,7 @@ export function TextForm() {
       <Button
         type="submit"
         disabled={isLoading}
-        className="h-11 w-full bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+        className="h-11 w-full bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 cursor-pointer border"
       >
         {isLoading ? (
           <>
