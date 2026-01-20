@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { supabaseAdmin, STORAGE_BUCKET } from "@/lib/supabase";
+import { generateDownloadUrl } from "@/lib/supabase";
 
 export async function GET(
     request: NextRequest,
@@ -23,25 +23,15 @@ export async function GET(
             return NextResponse.json({ error: "Link Expired"}, { status: 410 })
         }
 
-        const { data, error } = await supabaseAdmin.storage
-        .from(STORAGE_BUCKET)
-        .download(onelink.fileContent.storageKey)
+        // Generate signed download URL which is valid for 1 hr
+        const signedUrl = await generateDownloadUrl(onelink.fileContent.storageKey, 3600)
 
-        if(error || !data) {
-            console.error("Storage error: ", error)
-            return NextResponse.json({ error: "File Not Found"}, { status: 404 })
+        if(!signedUrl) {
+            return NextResponse.json({ error: "Failed to generate download URL"}, { status: 500 })
         }
 
-        const arrayBuffer = await data.arrayBuffer()
-
-        return new NextResponse(arrayBuffer, {
-            headers: {
-                "Content-Type": onelink.fileContent.mimeType,
-                "Content-Disposition": `inline; filename="${onelink.fileContent.fileName}"`,
-                "Content-Length": onelink.fileContent.fileSize.toString(),
-                "Cache-Control": "private, max-age=3600",
-            },
-        })
+        // Redirect to signed URL
+        return NextResponse.redirect(signedUrl)
     } catch (error) {
         console.error("File serve error: ", error)
         return NextResponse.json({ error: "Internal Error"}, { status: 500 })

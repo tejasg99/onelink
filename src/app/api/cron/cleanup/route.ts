@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   try {
     console.log("[Cron] Starting expired links cleanup...")
 
-    // Find all expired links
+    // Find all expired links with file content
     const expiredLinks = await db.oneLink.findMany({
       where: {
         expiresAt: {
@@ -34,11 +34,12 @@ export async function GET(request: NextRequest) {
 
     console.log(`[Cron] Found ${expiredLinks.length} expired links`)
 
-    // Delete files from storage
+    // Collect file storage keys to delete
     const fileKeys = expiredLinks
       .filter((link) => link.fileContent)
       .map((link) => link.fileContent!.storageKey)
 
+    // Delete files from storage using service role
     if (fileKeys.length > 0) {
       const { error: storageError } = await supabaseAdmin.storage
         .from(STORAGE_BUCKET)

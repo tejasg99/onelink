@@ -97,81 +97,6 @@ export async function createCodeOneLink(data: CodeFormData): Promise<ActionRespo
     }
 }
 
-// Create File OneLink
-export async function createFileOneLink(formData: FormData): Promise<ActionResponse> {
-    try {
-        const session = await auth()
-
-        if (!session?.user) {
-        return { success: false, error: "You must be logged in" }
-        }
-
-        const file = formData.get("file") as File
-        const title = formData.get("title") as string
-        const visibility = formData.get("visibility") as "PUBLIC" | "UNLISTED"
-        const expiresIn = formData.get("expiresIn") as string
-
-        if(!file || file.size === 0) {
-            return { success: false, error: "No file is provided"}
-        }
-
-        // 20MB limit
-        if(file.size > 20 * 1024 * 1024) {
-            return { success: false, error: "File size must be less than 20MB"}
-        }
-
-        const slug = generateSlug()
-        const expiresAt = getExpiryDate(expiresIn)
-
-        // Generate unique storage key
-        const fileExt = file.name.split(".").pop()
-        const storageKey = `${session.user.id}/${slug}.${fileExt}`
-
-        // Convert file to Buffer for supabase
-        const arrayBuffer = await file.arrayBuffer()
-        const buffer = Buffer.from(arrayBuffer)
-
-        // Upload to Supabase Storage
-        const { error: uploadError } = await supabaseAdmin.storage
-        .from(STORAGE_BUCKET)
-        .upload(storageKey, buffer, {
-            contentType: file.type,
-            upsert: false,
-        })
-
-        if(uploadError) {
-            console.error("Upload Error: ", uploadError)
-            return { success: false, error: "Failed to upload file"}
-        }
-
-        // Create db record
-        await db.oneLink.create({
-            data: {
-                slug,
-                title: title || file.name,
-                type: "FILE",
-                visibility,
-                expiresAt,
-                userId: session.user.id,
-                fileContent: {
-                    create: {
-                        fileName: file.name,
-                        fileSize: file.size,
-                        mimeType: file.type,
-                        storageKey,
-                    },
-                },
-            },
-        })
-
-        revalidatePath("/dashboard")
-        return { success: true, slug }
-    } catch (error) {
-        console.error("Create file Link error: ", error)
-        return { success: false, error: "Failed to create file link"}
-    }
-}
-
 // Create Bio links OneLink
 export async function createLinksOneLink(data: LinksFormData): Promise<ActionResponse> {
     try {
@@ -227,22 +152,28 @@ export async function deleteOneLink(id: string): Promise<ActionResponse> {
         })
 
         if (!onelink) {
-        return { success: false, error: "Link not found" }
+            return { success: false, error: "Link not found" }
         }
 
         if (onelink.userId !== session.user.id) {
-        return { success: false, error: "Unauthorized" }
+            return { success: false, error: "Unauthorized" }
         }
 
-        // Delete file from storage if exists
-        if(onelink.fileContent) {
-            await supabaseAdmin.storage
+        // Delete file from storage if exists (using service role key for admin access)
+        if (onelink.fileContent) {
+            const { error } = await supabaseAdmin.storage
             .from(STORAGE_BUCKET)
             .remove([onelink.fileContent.storageKey])
+
+            if (error) {
+                console.error("Failed to delete file from storage:", error)
+                
+            }
         }
 
+        // Continue with database deletion even if storage deletion fails
         await db.oneLink.delete({
-            where: { id }
+            where: { id },
         })
 
         revalidatePath("/dashboard")
