@@ -22,17 +22,18 @@ export async function Header() {
           <ThemeToggle />
           {session ? (
             <>
-              <Button 
-                asChild 
-                variant="outline" 
+              <Button
+                asChild
+                variant="outline"
                 size="sm"
+                className="hidden md:flex"
               >
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
-              <Button 
+              <Button
                 asChild
                 variant="outline"
-                size="sm" 
+                size="sm"
                 className="bg-foreground hover:bg-foreground"
               >
                 <Link href="/new">
@@ -43,9 +44,9 @@ export async function Header() {
             </>
           ) : (
             <>
-              <Button 
-                asChild 
-                variant="outline" 
+              <Button
+                asChild
+                variant="outline"
                 size="sm"
                 className="bg-background text-foreground"
               >
