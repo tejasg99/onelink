@@ -42,5 +42,18 @@ next-env.d.ts
 
 /generated/prisma
 
+# Prisma
+/prisma/migrations/migration_lock.toml
+
 # local files
 Summary.md
+
+# IDEs
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# OS
+Thumbs.db
+desktop.ini
+*.log
