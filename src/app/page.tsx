@@ -40,7 +40,7 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden p-0 md:p-2">
         {/* Gradient background */}
         <div className="absolute inset-0 -z-10">
           <div className="absolute inset-0 bg-linear-to-b from-muted/50 to-background" />
@@ -58,7 +58,7 @@ export default async function HomePage() {
             {/* Headline */}
             <h1 className="mb-6 text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
               Share anything with
-              <span className="block bg-linear-to-r from-muted-foreground to-foreground bg-clip-text">
+              <span className="block bg-linear-to-r from-muted-foreground to-foreground bg-clip-text text-transparent pb-3">
                 a single link
               </span>
             </h1>
@@ -92,18 +92,6 @@ export default async function HomePage() {
                   Browse public links
                 </Link>
               </Button>
-            </div>
-
-            {/* Social proof */}
-            <div className="mt-16 flex items-center justify-center gap-8 text-sm text-muted-foreground">
-              {stats.map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="text-2xl font-bold text-foreground">
-                    {stat.value}
-                  </div>
-                  <div>{stat.label}</div>
-                </div>
-              ))}
             </div>
           </div>
         </div>
