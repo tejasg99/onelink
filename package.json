@@ -7,7 +7,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:setup-rls": "npx tsx scripts/setup-rls.ts",
+    "db:migrate": "prisma migrate dev && npm run db:setup-rls",
+    "db:push": "prisma db push && npm run db:setup-rls"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",

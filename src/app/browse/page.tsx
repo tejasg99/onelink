@@ -24,7 +24,7 @@ interface BrowsePageProps {
 
 export default async function BrowsePage({ searchParams }: BrowsePageProps) {
     const params = await searchParams
-    const pagination = getPaginationParams(params, 12)
+    const pagination = getPaginationParams(params, 5)
 
     const filters: BrowseFilters = {
         type: (params.type as OneLinkType | "ALL") || "ALL",
