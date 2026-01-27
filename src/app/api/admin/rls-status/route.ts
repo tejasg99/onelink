@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@/lib/auth"
 import { verifyRLSStatus } from "@/lib/verify-rls"
 
 // Only allow in development or with admin secret
