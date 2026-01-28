@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
 import { supabaseAdmin, STORAGE_BUCKET } from "@/lib/supabase"
+import { strictRateLimiter, rateLimit, getRateLimitHeaders } from "@/lib/rate-limit"
 
 // Verify cron secret to prevent unauthorized access
 function verifyCronSecret(request: NextRequest): boolean {
@@ -12,9 +13,22 @@ function verifyCronSecret(request: NextRequest): boolean {
 }
 
 export async function GET(request: NextRequest) {
+  // Check rate limit first
+  const rateLimitResult = await rateLimit(strictRateLimiter)
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded" },
+      { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
+    )
+  }
+
   // Verify the request is from Vercel Cron
   if (process.env.NODE_ENV === "production" && !verifyCronSecret(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401, headers: getRateLimitHeaders(rateLimitResult) }
+    )
   }
 
   try {
@@ -63,12 +77,15 @@ export async function GET(request: NextRequest) {
 
     console.log(`[Cron] Deleted ${deleteResult.count} expired links from database`)
 
-    return NextResponse.json({
-      success: true,
-      deleted: deleteResult.count,
-      filesDeleted: fileKeys.length,
-      timestamp: new Date().toISOString(),
-    })
+    return NextResponse.json(
+      {
+        success: true,
+        deleted: deleteResult.count,
+        filesDeleted: fileKeys.length,
+        timestamp: new Date().toISOString()
+      },
+      { headers: getRateLimitHeaders(rateLimitResult) }
+    )
   } catch (error) {
     console.error("[Cron] Cleanup error:", error)
     return NextResponse.json(

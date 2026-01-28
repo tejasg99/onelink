@@ -14,6 +14,7 @@ import {
     type LinksFormData,
 } from "@/lib/validations/onelink";
 import { generateSlug, getExpiryDate } from "@/lib/utils";
+import { createRateLimiter, rateLimitByUser } from "@/lib/rate-limit"
 
 // Response type for actions
 type ActionResponse = {
@@ -22,13 +23,34 @@ type ActionResponse = {
     error?: string
 }
 
+// helper function to check rate limit in server actions
+async function checkActionRateLimit(userId: string): Promise<string | null> {
+    try {
+        const result = await rateLimitByUser(userId, createRateLimiter)
+        if (!result.success) {
+            return "Rate limit exceeded. Please slow down and try again"
+        }
+        return null
+    } catch (error) {
+        // If rate limiting fails, allow the request(fail open)
+        console.error("Rate limit check failed: ", error)
+        return null
+    }
+}
+
 // Create Text OneLink
 export async function createTextOneLink(data: TextFormData): Promise<ActionResponse> {
     try {
         const session = await auth();
 
-        if(!session?.user) {
-            return { success: false, error: "You must be logged in"}
+        if (!session?.user) {
+            return { success: false, error: "You must be logged in" }
+        }
+
+        // Check rate limit
+        const rateLimitError = await checkActionRateLimit(session.user.id)
+        if (rateLimitError) {
+            return { success: false, error: rateLimitError }
         }
 
         const validated = textSchema.parse(data)
@@ -65,7 +87,13 @@ export async function createCodeOneLink(data: CodeFormData): Promise<ActionRespo
         const session = await auth()
 
         if (!session?.user) {
-        return { success: false, error: "You must be logged in" }
+            return { success: false, error: "You must be logged in" }
+        }
+
+        // Check rate limit
+        const rateLimitError = await checkActionRateLimit(session.user.id)
+        if (rateLimitError) {
+            return { success: false, error: rateLimitError }
         }
 
         const validated = codeSchema.parse(data)
@@ -93,7 +121,7 @@ export async function createCodeOneLink(data: CodeFormData): Promise<ActionRespo
         return { success: true, slug }
     } catch (error) {
         console.error("Create code error: ", error)
-        return { success: false, error: "Failed to create code link"}
+        return { success: false, error: "Failed to create code link" }
     }
 }
 
@@ -103,7 +131,13 @@ export async function createLinksOneLink(data: LinksFormData): Promise<ActionRes
         const session = await auth()
 
         if (!session?.user) {
-        return { success: false, error: "You must be logged in" }
+            return { success: false, error: "You must be logged in" }
+        }
+
+        // Check rate limit
+        const rateLimitError = await checkActionRateLimit(session.user.id)
+        if (rateLimitError) {
+            return { success: false, error: rateLimitError }
         }
 
         const validated = linksSchema.parse(data)
@@ -130,7 +164,7 @@ export async function createLinksOneLink(data: LinksFormData): Promise<ActionRes
         })
 
         revalidatePath("/dashboard")
-        return { success: true, slug}
+        return { success: true, slug }
     } catch (error) {
         console.error("Create Bio OneLink error:", error)
         return { success: false, error: "Failed to create Bio link" }
@@ -143,7 +177,13 @@ export async function deleteOneLink(id: string): Promise<ActionResponse> {
         const session = await auth()
 
         if (!session?.user) {
-        return { success: false, error: "You must be logged in" }
+            return { success: false, error: "You must be logged in" }
+        }
+
+        // Check rate limit
+        const rateLimitError = await checkActionRateLimit(session.user.id)
+        if (rateLimitError) {
+            return { success: false, error: rateLimitError }
         }
 
         const onelink = await db.oneLink.findUnique({
@@ -162,12 +202,12 @@ export async function deleteOneLink(id: string): Promise<ActionResponse> {
         // Delete file from storage if exists (using service role key for admin access)
         if (onelink.fileContent) {
             const { error } = await supabaseAdmin.storage
-            .from(STORAGE_BUCKET)
-            .remove([onelink.fileContent.storageKey])
+                .from(STORAGE_BUCKET)
+                .remove([onelink.fileContent.storageKey])
 
             if (error) {
                 console.error("Failed to delete file from storage:", error)
-                
+
             }
         }
 
@@ -184,12 +224,12 @@ export async function deleteOneLink(id: string): Promise<ActionResponse> {
     }
 }
 
-// Increment view count
+// Increment view count - no rate limit
 export async function incrementViewCount(slug: string): Promise<void> {
     try {
         await db.oneLink.update({
             where: { slug },
-            data: { viewCount: { increment: 1 }},
+            data: { viewCount: { increment: 1 } },
         })
     } catch (error) {
         console.error("View count update error: ", error)
