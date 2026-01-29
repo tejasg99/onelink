@@ -31,7 +31,7 @@ const strictPaths = [
     "/api/auth",
 ]
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const path = request.nextUrl.pathname
 
     // Skip rate limiting for static files and internal next.js paths
