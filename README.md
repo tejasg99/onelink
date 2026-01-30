@@ -270,6 +270,17 @@ SUPABASE_SERVICE_ROLE_KEY=""
 # Cron Jobs
 # ===========================================
 CRON_SECRET=""
+
+# ===========================================
+# Admin
+# ===========================================
+ADMIN_SECRET=""
+
+# ===========================================
+# Rate Limiting (Upstash Redis)
+# ===========================================
+UPSTASH_REDIS_REST_URL=""
+UPSTASH_REDIS_REST_TOKEN=""
 ```
 ### Getting Credentials
 Supabase Setup

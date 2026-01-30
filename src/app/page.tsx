@@ -28,12 +28,6 @@ const features = [
   },
 ]
 
-const stats = [
-  { value: "100K+", label: "Links Created" },
-  { value: "50K+", label: "Active Users" },
-  { value: "99.9%", label: "Uptime" },
-]
-
 export default async function HomePage() {
   const session = await auth()
 
