@@ -156,7 +156,7 @@ export default async function HomePage() {
               Ready to get started?
             </h2>
             <p className="mb-8 text-lg text-muted-foreground">
-              Create your first link in seconds. No credit card required.
+              Create your first link in seconds. Its completely free.
             </p>
             <Button
               asChild
@@ -164,7 +164,7 @@ export default async function HomePage() {
               className="h-12 px-8 text-base bg-foreground text-background hover:bg-foreground/90"
             >
               <Link href={session ? "/new" : "/login"}>
-                Get started for free
+                Get started
               </Link>
             </Button>
           </div>
@@ -196,7 +196,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} OneLink. All rights reserved.
+              © {new Date().getFullYear()} OneLink
             </p>
           </div>
         </div>

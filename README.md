@@ -118,6 +118,7 @@ OneLink is a modern, secure platform for sharing content through unique, shareab
 | [Prisma](https://www.prisma.io/) | Type-safe ORM |
 | [PostgreSQL](https://www.postgresql.org/) | Relational database |
 | [Supabase Storage](https://supabase.com/storage) | File storage with RLS |
+| [Upstash](https://upstash.com/) | Rate Limiting |
 
 ### Infrastructure
 | Technology | Purpose |
@@ -192,11 +193,12 @@ Implemented Security Measures
 |-------------|-------------|
 | Authentication	| Secure OAuth 2.0 via NextAuth.js |
 | Authorization	    |  Server-side checks on all mutations |
-| RLS	            |  Row Level Security on Supabase Storage |
+| RLS	            |  Row Level Security for database and storage |
 | Signed URLs	    |  Time-limited URLs for file access |
 | Input Validation	|  Zod schemas on all user inputs |
 | CSRF Protection	|  Built-in Next.js CSRF protection |
 | Cron Auth	        |  Bearer token authentication for cron jobs |
+| Rate Limiting   | Rate limiting using upstash to prevent abuse |
 ---
 
 ## 🚀 Getting Started
