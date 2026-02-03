@@ -28,6 +28,7 @@ import {
   Calendar,
   AlertTriangle,
   Info,
+  Pencil,
 } from "lucide-react"
 
 export const Icons = {
@@ -60,4 +61,5 @@ export const Icons = {
   calendar: Calendar,
   warning: AlertTriangle,
   info: Info,
+  edit: Pencil,
 } as const

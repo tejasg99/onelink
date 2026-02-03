@@ -23,25 +23,35 @@ export function formatBytes(bytes: number, decimals: number = 2): string {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
 }
 
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+})
+
 export function formatRelativeTime(date: Date): string {
   const now = new Date()
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-  
+
+  const formattedDate = dateFormatter.format(date)
+
   if (diffInSeconds < 0) {
-    // Future date (for expiry)
+    // Future date (expiry etc.)
     const absDiff = Math.abs(diffInSeconds)
+
     if (absDiff < 3600) return `in ${Math.floor(absDiff / 60)}m`
     if (absDiff < 86400) return `in ${Math.floor(absDiff / 3600)}h`
     if (absDiff < 604800) return `in ${Math.floor(absDiff / 86400)}d`
-    return `on ${date.toLocaleDateString()}`
+
+    return `on ${formattedDate}`
   }
 
-  if (diffInSeconds < 60) return 'just now'
+  if (diffInSeconds < 60) return "just now"
   if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
   if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
   if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`
-  
-  return date.toLocaleDateString()
+
+  return formattedDate
 }
 
 export function getExpiryDate(expiresIn: string): Date | null {

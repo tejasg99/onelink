@@ -3,9 +3,16 @@ import Link from "next/link"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { Button } from "@/components/ui/button"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip"
 import { Icons } from "@/components/icons"
-import { formatRelativeTime } from "@/lib/utils"
+import { formatRelativeTime, getBaseUrl } from "@/lib/utils"
 import { DeleteLinkButton } from "@/components/delete-link-button"
+import { CopyLinkButton } from "@/components/copy-link-button"
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -22,6 +29,8 @@ export default async function DashboardPage() {
       createdAt: "desc",
     },
   })
+
+  const baseUrl = getBaseUrl()
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -57,69 +66,131 @@ export default async function DashboardPage() {
           </Button>
         </div>
       ) : (
-        <div className="grid gap-4">
-          {onelinks.map((link) => {
-            const isExpired =
-              link.expiresAt && new Date(link.expiresAt) < new Date()
+        <TooltipProvider>
+          <div className="grid gap-4">
+            {onelinks.map((link) => {
+              const isExpired = link.expiresAt && new Date(link.expiresAt) < new Date()
+              const linkUrl = `${baseUrl}/s/${link.slug}`
 
-            return (
-              <div
-                key={link.id}
-                className={`group flex items-center justify-between rounded-xl border border-border bg-card p-4 transition-all hover:border-border/80 hover:shadow-md ${
-                  isExpired ? "opacity-60" : ""
-                }`}
-              >
-                <Link
-                  href={`/s/${link.slug}`}
-                  className="flex flex-1 items-center gap-4"
+              return (
+                <div
+                  key={link.id}
+                  className={`group rounded-xl border border-border bg-card p-4 transition-all hover:border-foreground/20 hover:shadow-md ${isExpired ? "opacity-60" : ""}`}
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
-                    {link.type === "TEXT" && (
-                      <Icons.text className="h-5 w-5 text-muted-foreground" />
-                    )}
-                    {link.type === "CODE" && (
-                      <Icons.code className="h-5 w-5 text-muted-foreground" />
-                    )}
-                    {link.type === "FILE" && (
-                      <Icons.file className="h-5 w-5 text-muted-foreground" />
-                    )}
-                    {link.type === "LINKS" && (
-                      <Icons.links className="h-5 w-5 text-muted-foreground" />
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="font-medium">
-                      {link.title || `Untitled ${link.type.toLowerCase()}`}
-                    </h3>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Icons.eye className="h-3.5 w-3.5" />
-                        {link.viewCount}
+                  <div className="flex items-center justify-between gap-4">
+                    {/* Left side link info */}
+                    <div className="flex flex-1 items-center gap-4 min-w-0">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+                        {link.type === "TEXT" && (
+                          <Icons.text className="h-5 w-5 text-muted-foreground" />
+                        )}
+                        {link.type === "CODE" && (
+                          <Icons.code className="h-5 w-5 text-muted-foreground" />
+                        )}
+                        {link.type === "FILE" && (
+                          <Icons.file className="h-5 w-5 text-muted-foreground" />
+                        )}
+                        {link.type === "LINKS" && (
+                          <Icons.links className="h-5 w-5 text-muted-foreground" />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="truncate font-medium">
+                            {link.title || `Untitled ${link.type.toLowerCase()}`}
+                          </h3>
+                          {isExpired && (
+                            <span className="shrink-0 rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
+                              Expired
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Icons.eye className="h-3.5 w-3.5" />
+                            {link.viewCount}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Icons.clock className="h-3.5 w-3.5" />
+                            {formatRelativeTime(link.createdAt)}
+                          </span>
+                          {link.expiresAt && !isExpired && (
+                            <span className="text-amber-600 dark:text-amber-400">
+                              Expires {formatRelativeTime(link.expiresAt)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    {/* Right side Actions */}
+                    <div className="flex items-center gap-1">
+                      {/* Visibility Badge */}
+                      <span
+                        className="mr-2 hidden rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground sm:inline-block"
+                      >
+                        {link.visibility === "PUBLIC" ? (
+                          <span className="flex items-center gap-1">
+                            <Icons.globe className="h-3 w-3" />
+                            Public
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1">
+                            <Icons.lock className="h-3 w-3" />
+                            Unlisted
+                          </span>
+                        )}
                       </span>
-                      <span className="flex items-center gap-1">
-                        <Icons.clock className="h-3.5 w-3.5" />
-                        {formatRelativeTime(link.createdAt)}
-                      </span>
-                      {isExpired && <span className="text-destructive">Expired</span>}
-                      {link.expiresAt && !isExpired && (
-                        <span className="text-amber-600 dark:text-amber-400">
-                          Expires {formatRelativeTime(link.expiresAt)}
-                        </span>
-                      )}
+
+                      {/* Copy Link */}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <CopyLinkButton url={linkUrl} />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>Copy Link</TooltipContent>
+                      </Tooltip>
+
+                      {/* View Link */}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="icon" asChild>
+                            <Link href={`/s/${link.slug}`}>
+                              <Icons.externalLink className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>View link</TooltipContent>
+                      </Tooltip>
+
+                      {/* Edit Link */}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="icon" asChild>
+                            <Link href={`/edit/${link.slug}`}>
+                              <Icons.edit className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Edit link</TooltipContent>
+                      </Tooltip>
+
+                      {/* Delete Link */}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <DeleteLinkButton id={link.id} title={link.title} />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>Delete link</TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
-                </Link>
-
-                <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-                    {link.visibility.toLowerCase()}
-                  </span>
-                  <DeleteLinkButton id={link.id} title={link.title} />
                 </div>
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        </TooltipProvider>
       )}
     </div>
   )
