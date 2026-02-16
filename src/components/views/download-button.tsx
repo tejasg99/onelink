@@ -11,7 +11,7 @@ interface DownloadButtonProps {
 }
 
 export function DownloadButton({ slug, fileName }: DownloadButtonProps) {
-    const [isLoading, setIsLoading ] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleDownload = async () => {
         setIsLoading(true)
@@ -51,8 +51,8 @@ export function DownloadButton({ slug, fileName }: DownloadButtonProps) {
         <Button onClick={handleDownload} disabled={isLoading}>
             {isLoading ? (
                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            ):(
-                <Icons.file className="mr-2 h-4 w-4"/>
+            ) : (
+                <Icons.file className="mr-2 h-4 w-4 hidden md:block" />
             )}
             Download
         </Button>
