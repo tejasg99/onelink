@@ -22,7 +22,7 @@ export function TextView({ onelink, content }: TextViewProps) {
         </div>
 
         {/* Content */}
-        <div className="prose max-w-none p-6">
+        <div className="prose max-w-none p-6 wrap-break-word">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {content.content}
           </ReactMarkdown>

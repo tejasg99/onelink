@@ -29,6 +29,7 @@ import {
   AlertTriangle,
   Info,
   Pencil,
+  QrCode,
 } from "lucide-react"
 
 export const Icons = {
@@ -62,4 +63,5 @@ export const Icons = {
   warning: AlertTriangle,
   info: Info,
   edit: Pencil,
+  qrCode: QrCode,
 } as const
